@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="resolution" default="0.1"/>
+    <arg name="width" default="20"/>
+    <arg name="height" default="20"/>
+    <arg name="expand_range" default="0.5"/>
+
+    <group ns="localmap_maker">
+        <param name="resolution" value="$(arg resolution)"/>
+        <param name="width" value="$(arg width)"/>
+        <param name="height" value="$(arg height)"/>
+
+        <node pkg="localmap_maker" type="scan_to_pointcloud" name="scan_to_pointcloud">
+            <remap from="/scan" to="/front_laser/scan"/>
+        </node>
+        <node pkg="localmap_maker" type="scan_to_grid" name="scan_to_grid">
+        </node>
+        <node pkg="localmap_maker" type="velodyne_to_grid" name="velodyne_to_grid">
+            <remap from="/obstacles" to="/velodyne_obstacles"/>
+            <remap from="/ground" to="/recognition/road_recognizer/cloud/road/stored"/>
+            <remap from="/curvature" to="/recognition/road_recognizer/road_cloud_publisher/cloud/curvature"/>
+        </node>
+        <node pkg="localmap_maker" type="integrate_grid" name="integrate_grid">
+            <param name="expand_range" value="$(arg expand_range)"/>
+        </node>
+    </group>
+</launch>
