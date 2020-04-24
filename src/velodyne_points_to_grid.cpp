@@ -1,23 +1,23 @@
 #include <pcl_ros/point_cloud.h>
 
-#include "localmap_maker/velodyne_to_grid.h"
+#include "localmap_maker/velodyne_points_to_grid.h"
 #include "localmap_maker/processing_pointcloud.h"
 
-GroundToGrid::GroundToGrid()
-    : ground_cost_(50), curvature_cost_(100), obstacles_cost_(100), mask_(Flags::CURVATURE | Flags::GROUND | Flags::OBSTACLES)
+VelodynePointsToGrid::VelodynePointsToGrid()
+    : curvature_cost_(100), ground_cost_(50), obstacles_cost_(100), mask_(Flags::CURVATURE | Flags::GROUND | Flags::OBSTACLES)
 {
-    cloud_curvature_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("/curvature", 1, boost::bind(&GroundToGrid::velodyneCallback, this, _1, Flags::CURVATURE));
-    cloud_ground_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("/ground", 1, boost::bind(&GroundToGrid::velodyneCallback, this, _1, Flags::GROUND));
-    cloud_obstacles_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("/obstacles", 1, boost::bind(&GroundToGrid::velodyneCallback, this, _1, Flags::OBSTACLES));
+    cloud_curvature_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("/curvature", 1, boost::bind(&VelodynePointsToGrid::velodyneCallback, this, _1, Flags::CURVATURE));
+    cloud_ground_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("/ground", 1, boost::bind(&VelodynePointsToGrid::velodyneCallback, this, _1, Flags::GROUND));
+    cloud_obstacles_sub_ = nh_.subscribe<sensor_msgs::PointCloud2>("/obstacles", 1, boost::bind(&VelodynePointsToGrid::velodyneCallback, this, _1, Flags::OBSTACLES));
 
     grid_pub_ = nh_.advertise<nav_msgs::OccupancyGrid>("/grid/velodyne", 1);
 }
 
-GroundToGrid::~GroundToGrid()
+VelodynePointsToGrid::~VelodynePointsToGrid()
 {
 }
 
-void GroundToGrid::velodyneCallback(const sensor_msgs::PointCloud2::ConstPtr& msg, const Flags::Type flags)
+void VelodynePointsToGrid::velodyneCallback(const sensor_msgs::PointCloud2::ConstPtr& msg, const Flags::Type flags)
 {
     static Flags update_flag = 0;
     if(flags & update_flag){
@@ -36,11 +36,11 @@ void GroundToGrid::velodyneCallback(const sensor_msgs::PointCloud2::ConstPtr& ms
         grid_.header = msg->header;
         grid_pub_.publish(grid_);
         update_flag = update_flag & ~mask_;
-        dataReset();
+        resetData();
     }
 }
 
-int8_t GroundToGrid::getCost(const Flags::Type flags) const
+int8_t VelodynePointsToGrid::getCost(const Flags::Type flags) const
 {
     switch(flags){
         case Flags::CURVATURE:
@@ -57,8 +57,8 @@ int8_t GroundToGrid::getCost(const Flags::Type flags) const
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "velodyne_to_grid");
-    GroundToGrid gt;
+    ros::init(argc, argv, "velodyne_points_to_grid");
+    VelodynePointsToGrid vpg;
     ros::spin();
     return 0;
 }

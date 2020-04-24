@@ -4,7 +4,7 @@ ScanToPointcloud::ScanToPointcloud()
 {
     cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/points/scan", 1);
     scan_sub_ = nh_.subscribe<sensor_msgs::LaserScan>("/scan", 1, &ScanToPointcloud::scanCallback, this);
-    listener_.setExtrapolationLimit(ros::Duration(0.1));
+    listener_.setExtrapolationLimit(ros::Duration(0.5));
 }
 
 void ScanToPointcloud::scanCallback(const sensor_msgs::LaserScan::ConstPtr& msg)

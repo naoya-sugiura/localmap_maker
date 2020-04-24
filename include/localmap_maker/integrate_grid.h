@@ -33,5 +33,4 @@ private:
     double expand_range_;
 };
 
-
 #endif //__INTEGRATE_GRID_H

@@ -28,54 +28,48 @@ void GridIntegrator::gridCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg, 
         grid_.header = msg->header;
         localmap_pub_.publish(grid_);
         update_flag = update_flag & ~mask_;
-        dataReset();
+        resetData();
     }
 }
 
 void GridIntegrator::expand()
 {
     const uint16_t cell_radius = static_cast<uint16_t>(expand_range_ / grid_.info.resolution);
-    std::vector<int8_t> marked(grid_.data.size(), 0);
+    std::vector<int8_t> expand_grid(grid_.data.size(), 0);
     for(uint16_t i = 0; i < grid_.info.width; ++i){
         for(uint16_t j = 0; j < grid_.info.height; ++j){
             const uint16_t base_index = getIndex(i, j);
-            if(grid_.data.at(base_index) <= 0){
+            const int8_t data = grid_.data.at(base_index);
+            if(data <= 0){
                 continue;
             }
-            marked.at(base_index) = 1;
-            int8_t data = grid_.data.at(base_index);
-            for(uint16_t k = -cell_radius; k<=cell_radius; ++k){
-                for(uint16_t l = -cell_radius; l<=cell_radius; ++l){
+            expand_grid.at(base_index) = data;
+            for(int16_t k = -cell_radius; k<=cell_radius; ++k){
+                for(int16_t l = -cell_radius; l<=cell_radius; ++l){
                     if(!mapValid(i+k, j+l)){
                         continue;
                     }
                     const uint16_t curr_index = getIndex(i+k, j+l);
-                    if(marked.at(curr_index)){
-                        if(marked.at(curr_index) == 2){
-                            grid_.data.at(curr_index) = std::max(grid_.data.at(curr_index), data);
-                        }
-                        continue;
-                    }
-                    marked.at(curr_index) = 1;
-                    if(!mapValid(i+k, j+l)){
+                    if(expand_grid.at(curr_index)){
+                        expand_grid.at(curr_index) = std::max(expand_grid.at(curr_index), data);
                         continue;
                     }
                     double distance_from_robot = sqrt(std::pow(getXFromI(i+k), 2.0) + std::pow(getYFromJ(j+l), 2.0));
                     if(distance_from_robot < expand_range_){
-                        if(grid_.data.at(curr_index) < 100);{
-                            grid_.data.at(curr_index) = 0;
+                        if(grid_.data.at(curr_index) < 100){
+                            expand_grid.at(curr_index) = 0;
                         }
                         continue;
                     }
-                    if(sqrt(std::pow(k, 2.0) + std::pow(l, 2.0)) > expand_range_){
+                    if(sqrt(std::pow(k, 2.0) + std::pow(l, 2.0)) > cell_radius){
                         continue;
                     }
-                    grid_.data.at(curr_index) = std::max(grid_.data.at(curr_index), data);
-                    marked.at(curr_index) = 2;
+                    expand_grid.at(curr_index) = std::max(grid_.data.at(curr_index), data);
                 }
             }
         }
     }
+    grid_.data.swap(expand_grid);
 }
 
 int main(int argc, char** argv)

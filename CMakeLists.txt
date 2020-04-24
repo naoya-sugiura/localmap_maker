@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(localmap_maker)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# SET(CMAKE_CXX_FLAGS "-std=c++11 -O2 -g -Wall ${CMAKE_CXX_FLAGS}")
+SET(CMAKE_CXX_FLAGS "-std=c++11 -O2 -g -Wall ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -216,10 +216,10 @@ target_link_libraries(scan_to_grid
   	${PCL_LIBRARIES}
 )
 #
-add_executable(velodyne_to_grid src/gridmap_handler.cpp
+add_executable(velodyne_points_to_grid src/gridmap_handler.cpp
                                  src/processing_pointcloud.cpp
-                                 src/velodyne_to_grid.cpp)
-target_link_libraries(velodyne_to_grid
+                                 src/velodyne_points_to_grid.cpp)
+target_link_libraries(velodyne_points_to_grid
 	${catkin_LIBRARIES}
   	${PCL_LIBRARIES}
     ${Boost_LIBRARIES}

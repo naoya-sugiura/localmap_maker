@@ -23,5 +23,6 @@
         <node pkg="localmap_maker" type="integrate_grid" name="integrate_grid">
             <param name="expand_range" value="$(arg expand_range)"/>
         </node>
+        <node pkg="rviz" type="rviz" name="localmap_viz" args="-d $(find localmap_maker)/config/localmap.rviz"/>
     </group>
 </launch>

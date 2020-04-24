@@ -1,13 +1,12 @@
-#ifndef __GROUND_TO_GRID_H
-#define __GROUND_TO_GRID_H
+#ifndef __VELODYNE_POINTS_TO_GRID_H
+#define __VELODYNE_POINTS_TO_GRID_H
 
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 
 #include "localmap_maker/gridmap_handler.h"
 
-
-class GroundToGrid : public GridMapHandler
+class VelodynePointsToGrid : public GridMapHandler
 {
 public:
     class Flags {
@@ -22,8 +21,8 @@ public:
     private:
         Type val_;
     };
-    GroundToGrid();
-    ~GroundToGrid();
+    VelodynePointsToGrid();
+    ~VelodynePointsToGrid();
     void velodyneCallback(const sensor_msgs::PointCloud2::ConstPtr&, const Flags::Type);
     int8_t getCost(const Flags::Type) const;
 private:
@@ -38,8 +37,4 @@ private:
     Flags mask_;
 };
 
-
-
-
-
-#endif //__GROUND_TO_GRID_H
+#endif // __VELODYNE_POINTS_TO_GRID_H

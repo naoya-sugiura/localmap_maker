@@ -10,7 +10,7 @@ class GridMapHandler{
 public:
     GridMapHandler();
     virtual ~GridMapHandler();
-    void dataReset(){std::fill(grid_.data.begin(), grid_.data.end(), 0.0);};
+    void resetData(){std::fill(grid_.data.begin(), grid_.data.end(), 0.0);};
     unsigned int getIndexFromPoint(const float, const float);
     template <typename T> T getIndex(T i, T j);
     template<typename T> float getXFromI(T i);
@@ -62,7 +62,7 @@ inline unsigned int GridMapHandler::getJFromY(T y)
 template<typename T>
 inline bool GridMapHandler::mapValid(T i, T j)
 {
-    return ((i >= 0) && (i < grid_.info.width) && (j >= 0) && (j < grid_.info.height));
+    return ((i >= 0) && (i < static_cast<T>(grid_.info.width)) && (j >= 0) && (j < static_cast<T>(grid_.info.height)));
 }
 
 #endif //__GRIDMAP_HANDLER_H
