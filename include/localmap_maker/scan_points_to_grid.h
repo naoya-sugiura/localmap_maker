@@ -1,14 +1,14 @@
-#ifndef __SCAN_TO_GRID_H
-#define __SCAN_TO_GRID_H
+#ifndef __SCAN_POINTS_TO_GRID_H
+#define __SCAN_POINTS_TO_GRID_H
 
 #include <sensor_msgs/PointCloud2.h>
 #include "localmap_maker/gridmap_handler.h"
 
-class ScanToGrid : public GridMapHandler
+class ScanPointsToGrid : public GridMapHandler
 {
 public:
-    ScanToGrid();
-    ~ScanToGrid();
+    ScanPointsToGrid();
+    ~ScanPointsToGrid();
     void scanCallback(const sensor_msgs::PointCloud2::ConstPtr&);
 private:
     ros::NodeHandle nh_;
@@ -17,4 +17,4 @@ private:
     const int8_t cost_;
 };
 
-#endif // __SCAN_TO_GRID_H
+#endif // __SCAN_POINTS_TO_GRID_H

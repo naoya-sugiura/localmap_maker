@@ -17,32 +17,32 @@ VelodynePointsToGrid::~VelodynePointsToGrid()
 {
 }
 
-void VelodynePointsToGrid::velodyneCallback(const sensor_msgs::PointCloud2::ConstPtr& msg, const Flags::Type flags)
+void VelodynePointsToGrid::velodyneCallback(const sensor_msgs::PointCloud2::ConstPtr& msg, const Flags::Type dataType)
 {
-    static Flags update_flag = 0;
-    if(flags & update_flag){
+    static Flags isUpdated = 0;
+    if(dataType & isUpdated){
         return;
     }
     pcl::PointCloud<pcl::PointXYZI>::Ptr velodyne_pc(new pcl::PointCloud<pcl::PointXYZI>);
     pcl::fromROSMsg(*msg, *velodyne_pc);
-    if(flags & (Flags::GROUND | Flags::OBSTACLES)){
+    if(dataType & (Flags::GROUND | Flags::OBSTACLES)){
         points::downsample(velodyne_pc);
     }
     points::transform(velodyne_pc, msg->header.frame_id, msg->header.stamp);
     points::extract(velodyne_pc, width_meter_*0.5, height_meter_*0.5);
-    pointToGrid(velodyne_pc, getCost(flags));
-    update_flag = update_flag | flags;
-    if((update_flag & mask_) == mask_){
+    pointToGrid(velodyne_pc, getCost(dataType));
+    isUpdated = isUpdated | dataType;
+    if((isUpdated & mask_) == mask_){
         grid_.header = msg->header;
         grid_pub_.publish(grid_);
-        update_flag = update_flag & ~mask_;
+        isUpdated = isUpdated & ~mask_;
         resetData();
     }
 }
 
-int8_t VelodynePointsToGrid::getCost(const Flags::Type flags) const
+int8_t VelodynePointsToGrid::getCost(const Flags::Type dataType) const
 {
-    switch(flags){
+    switch(dataType){
         case Flags::CURVATURE:
             return curvature_cost_;
         case Flags::GROUND:

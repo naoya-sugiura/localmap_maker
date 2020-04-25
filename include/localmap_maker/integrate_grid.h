@@ -21,7 +21,7 @@ public:
     };
     GridIntegrator();
     ~GridIntegrator();
-    void gridCallback(const nav_msgs::OccupancyGrid::ConstPtr&, const Flags::Type flags);
+    void gridCallback(const nav_msgs::OccupancyGrid::ConstPtr&, const Flags::Type);
     void expand();
 private:
     ros::NodeHandle nh_;

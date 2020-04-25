@@ -208,10 +208,10 @@ add_executable(scan_to_pointcloud src/scan_to_pointcloud.cpp)
 target_link_libraries(scan_to_pointcloud ${catkin_LIBRARIES})
 
 #scan_to_grid
-add_executable(scan_to_grid src/gridmap_handler.cpp
+add_executable(scan_points_to_grid src/gridmap_handler.cpp
                                  src/processing_pointcloud.cpp
-                                 src/scan_to_grid.cpp)
-target_link_libraries(scan_to_grid
+                                 src/scan_points_to_grid.cpp)
+target_link_libraries(scan_points_to_grid
 	${catkin_LIBRARIES}
   	${PCL_LIBRARIES}
 )
@@ -228,6 +228,5 @@ add_executable(integrate_grid src/gridmap_handler.cpp
                                  src/integrate_grid.cpp)
 target_link_libraries(integrate_grid
 	${catkin_LIBRARIES}
-  	${PCL_LIBRARIES}
     ${Boost_LIBRARIES}
 )

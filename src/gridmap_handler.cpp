@@ -13,7 +13,7 @@ GridMapHandler::~GridMapHandler()
 {
 }
 
-unsigned int GridMapHandler::getIndexFromPoint(const float x, const float y)
+unsigned int GridMapHandler::getIndexFromPoint(const float x, const float y) const
 {
     unsigned int i = getIFromX(x);
     unsigned int j = getJFromY(y);
@@ -50,15 +50,3 @@ void GridMapHandler::pointToGrid(const pcl::PointCloud<pcl::PointXYZI>::Ptr& pc,
         grid_.data.at(getIndexFromPoint(point.x, point.y)) = cost;
     }
 }
-
-void GridMapHandler::showGridInfo()
-{
-    std::cout << "width(meter)  : " << width_meter_ << std::endl;
-    std::cout << "width         : " << grid_.info.width << std::endl;
-    std::cout << "height(meter) : " << height_meter_ << std::endl;
-    std::cout << "height        : " << grid_.info.height << std::endl;
-    std::cout << "resolution    : " << grid_.info.resolution << std::endl;
-    std::cout << "header        : " << grid_.header.frame_id << std::endl;
-    std::cout << "grid size     : " << grid_.data.size() << std::endl;
-}
-

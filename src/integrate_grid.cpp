@@ -8,26 +8,25 @@ GridIntegrator::GridIntegrator()
     grid_velodyne_sub_ = nh_.subscribe<nav_msgs::OccupancyGrid>("/grid/velodyne", 1, boost::bind(&GridIntegrator::gridCallback, this, _1, Flags::VELODYNE));
     grid_hokuyo_sub_ = nh_.subscribe<nav_msgs::OccupancyGrid>("/grid/scan", 1, boost::bind(&GridIntegrator::gridCallback, this, _1, Flags::HOKUYO));
     localmap_pub_ = nh_.advertise<nav_msgs::OccupancyGrid>("/localmap", 1);
-
 }
 
 GridIntegrator::~GridIntegrator()
 {
 }
 
-void GridIntegrator::gridCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg, const Flags::Type flags)
+void GridIntegrator::gridCallback(const nav_msgs::OccupancyGrid::ConstPtr& msg, const Flags::Type dataType)
 {
-    static Flags update_flag = 0;
-    if(flags & update_flag){
+    static Flags isUpdated = 0;
+    if(dataType & isUpdated){
         return;
     }
     gridToGrid(msg->data);
-    update_flag = update_flag | flags;
-    if((update_flag & mask_) == mask_){
+    isUpdated = isUpdated | dataType;
+    if((isUpdated & mask_) == mask_){
         expand();
         grid_.header = msg->header;
         localmap_pub_.publish(grid_);
-        update_flag = update_flag & ~mask_;
+        isUpdated = isUpdated & ~mask_;
         resetData();
     }
 }
